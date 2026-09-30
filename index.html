@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI长辈守护｜B端养老看护平台</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, "Microsoft Yahei", "Segoe UI", sans-serif;
+  }
+
+  :root {
+    --primary: #2563eb;
+    --primary-light: #eef4ff;
+    --primary-strong: #1d4ed8;
+    --border: #eef0f4;
+    --border-strong: #e2e4e8;
+    --text-main: #0f172a;
+    --text-sub: #475569;
+    --text-muted: #94a3b8;
+    --bg-page: #f6f8fb;
+    --bg-card: #ffffff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+
+  /* 顶部导航 */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .topbar-nav {
+    display: flex;
+    gap: 6px;
+  }
+  .topbar-nav a {
+    padding: 7px 14px;
+    border-radius: 6px;
+    color: var(--text-sub);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all .2s;
+  }
+  .topbar-nav a:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  /* 主容器 */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+  }
+
+  /* 页面标题区 */
+  .page-header {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+  }
+  .page-title h1 {
+    font-size: 26px;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  .page-title p {
+    color: var(--text-sub);
+    font-size: 15px;
+  }
+  .tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--primary-light);
+    color: var(--primary-strong);
+    font-size: 13px;
+    border: 1px solid #dbeafe;
+  }
+
+  /* 概览卡片 */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all .2s;
+  }
+  .stat-card:hover {
+    border-color: #c7d7ff;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+    transform: translateY(-2px);
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .stat-icon.blue { background: #eef4ff; color: #2563eb; }
+  .stat-icon.green { background: #e6f7f1; color: #10b981; }
+  .stat-icon.orange { background: #fff7e6; color: #f59e0b; }
+  .stat-icon.red { background: #fdeeee; color: #ef4444; }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .stat-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* 通用卡片 */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  .card-action {
+    font-size: 13px;
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .card-action:hover { text-decoration: underline; }
+
+  /* 痛点卡片 */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .pain-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    background: #fafbff;
+  }
+  .pain-item h4 {
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pain-item p {
+    font-size: 14px;
+    color: var(--text-sub);
+  }
+
+  /* 原型预览 */
+  .prototype-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .prototype-box {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: #fafbff;
+  }
+  .prototype-box h4 {
+    font-size: 15px;
+    margin-bottom: 14px;
+    color: var(--text-main);
+  }
+  .img-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .img-row img {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 10px;
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  }
+  .prototype-note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--text-sub);
+    background: #fff;
+    border-left: 3px solid var(--primary);
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+
+  /* 用户角色 */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .role-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    background: #fff;
+  }
+  .role-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #eef4ff, #dbeafe);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .role-card h4 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .role-card p {
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+
+  /* 功能列表 */
+  .function-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .function-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    background: #fff;
+    display: flex;
+    gap: 14px;
+  }
+  .function-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .function-item h4 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .function-item p {
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+  .mode-box {
+    background: #fafbff;
+    border: 1px dashed #c7d7ff;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+  .mode-box h5 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--text-main);
+  }
+  .mode-box ul {
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+
+  /* B端能力表 */
+  .ability-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .ability-table th {
+    background: #f6f8fb;
+    color: var(--text-sub);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .ability-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-sub);
+  }
+  .ability-table tr:hover td {
+    background: #fafbff;
+  }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #e6f7f1;
+    color: #10b981;
+  }
+  .status-pill.plan {
+    background: #fff7e6;
+    color: #f59e0b;
+  }
+
+  /* 亮点 */
+  .highlight-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .highlight-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+  }
+  .highlight-item h4 {
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: var(--text-main);
+  }
+  .highlight-item p {
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+
+  /* 文档区 */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .doc-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    background: #fff;
+    text-decoration: none;
+    display: block;
+    transition: all .2s;
+  }
+  .doc-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+  }
+  .doc-card h4 {
+    font-size: 15px;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  .doc-card p {
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    .pain-grid,
+    .prototype-grid,
+    .function-list,
+    .role-grid { grid-template-columns: 1fr; }
+    .highlight-list { grid-template-columns: 1fr 1fr; }
+    .doc-grid { grid-template-columns: repeat(2, 1fr); }
+    .page-header { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 560px) {
+    .topbar-inner { padding: 12px 16px; }
+    .container { padding: 18px 14px 32px; }
+    .overview-grid,
+    .highlight-list,
+    .doc-grid { grid-template-columns: 1fr; }
+    .page-title h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-logo">AI</div>
+      <span>AI长辈守护｜B端养老看护平台</span>
+    </div>
+    <div class="topbar-nav">
+      <a href="#overview">项目概览</a>
+      <a href="#prototype">原型预览</a>
+      <a href="#functions">功能设计</a>
+      <a href="#documents">项目文档</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 页面标题 -->
+  <div class="page-header">
+    <div class="page-title">
+      <h1>AI长辈守护｜B端养老看护平台</h1>
+      <p>C端老人适老化APP + B端养老机构看护后台，聚焦老人求助、告警推送与护工端处理闭环。</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag">适老化设计</span>
+      <span class="tag">双触发交互</span>
+      <span class="tag">B+C联动</span>
+      <span class="tag">MVP作品集</span>
+    </div>
+  </div>
+
+  <!-- 数据概览 -->
+  <div class="overview-grid" id="overview">
+    <div class="stat-card">
+      <div class="stat-label"><div class="stat-icon blue">👤</div>服务对象</div>
+      <div class="stat-value">老人 + 护工</div>
+      <div class="stat-desc">两类核心用户，覆盖机构看护场景</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">📱</div>C端核心页面</div>
+      <div class="stat-value">4个</div>
+      <div class="stat-desc">首页、语音交互、健康问询、位置</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">🖥️</div>B端MVP页面</div>
+      <div class="stat-value">1个</div>
+      <div class="stat-desc">首页仪表盘，打通告警处理闭环</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">⚠️</div>核心闭环</div>
+      <div class="stat-value">求助 → 告警 → 处理</div>
+      <div class="stat-desc">老人端触发，护工端实时响应</div>
+    </div>
+  </div>
+
+  <!-- 项目简介 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">项目简介</div>
+      <span class="card-action">MVP作品集项目</span>
+    </div>
+    <p style="color:var(--text-sub);margin-bottom:16px;">
+      面向养老机构的智慧看护平台，包含老人使用的 C 端极简适老化 APP，以及护工使用的 B 端管理后台。项目围绕老人求助、异常告警、护工处理与权限管理展开，重点解决老人端操作复杂、机构端告警滞后的问题。
+    </p>
+    <div class="pain-grid">
+      <div class="pain-item">
+        <h4>🧓 老人端痛点</h4>
+        <p>普通 APP 字体小、广告多、操作复杂，老人看不清、容易误点广告，基础通讯和求助操作门槛高。</p>
+      </div>
+      <div class="pain-item">
+        <h4>🏥 机构端痛点</h4>
+        <p>一名护工同时照看十几位老人，无法实时掌握老人位置和身体异常情况，告警信息滞后，处理不及时。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 原型预览 -->
+  <div class="card" id="prototype">
+    <div class="card-header">
+      <div class="card-title">原型预览</div>
+      <span class="card-action">Figma 可视化原型</span>
+    </div>
+    <div class="prototype-grid">
+      <div class="prototype-box">
+        <h4>C端老人适老化APP</h4>
+        <div class="img-row">
+          <img src="./img/home-page.png" alt="APP首页">
+          <img src="./img/listen-page.png" alt="AI聆听界面">
+        </div>
+      </div>
+      <div class="prototype-box">
+        <h4>B端护工Web后台</h4>
+        <div class="img-row">
+          <img src="./img/admin-dashboard.png" alt="护工后台首页">
+        </div>
+        <div class="prototype-note">
+          B端为网页 SaaS 工作台，护工电脑浏览器登录使用。MVP 仅完成首页仪表盘可视化原型，用于查看老人统计、处理告警、管理老人语音唤醒权限。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 用户角色 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">用户角色</div>
+    </div>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-avatar">🧓</div>
+        <div>
+          <h4>C端：养老院老人</h4>
+          <p>视力衰退、记忆力弱，部分存在口齿不便，需要大字体、低门槛操作。</p>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-avatar">👨‍⚕️</div>
+        <div>
+          <h4>B端：护工 / 机构管理员</h4>
+          <p>负责老人日常看护、告警处理、权限配置和机构端工作台管理。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C端核心功能 -->
+  <div class="card" id="functions">
+    <div class="card-header">
+      <div class="card-title">C端APP核心功能</div>
+      <span class="card-action">适老化 + 语音助手</span>
+    </div>
+    <div class="function-list">
+      <div class="function-item">
+        <div class="function-num">1</div>
+        <div>
+          <h4>一键紧急求助</h4>
+          <p>一键向护工、家属推送告警消息与老人实时位置，降低紧急情况的操作成本。</p>
+        </div>
+      </div>
+      <div class="function-item">
+        <div class="function-num">2</div>
+        <div>
+          <h4>AI语音助手</h4>
+          <p>支持手动点击进入聆听页，也支持前台唤醒词触发，适合不同能力老人使用。</p>
+        </div>
+      </div>
+      <div class="function-item">
+        <div class="function-num">3</div>
+        <div>
+          <h4>超大字体拨号</h4>
+          <p>大字体、大按钮设计，老人可一键拨打联系人电话，减少识别和点击负担。</p>
+        </div>
+      </div>
+      <div class="function-item">
+        <div class="function-num">4</div>
+        <div>
+          <h4>视频通话入口</h4>
+          <p>为老人提供清晰的家属视频通话入口，弥补文字和小按钮带来的使用障碍。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-box">
+      <h5>📐 两套使用路径并行</h5>
+      <ul>
+        <li><strong>手动触屏模式：</strong>全部功能都支持点击操作，不强制使用语音。</li>
+        <li><strong>语音指令模式：</strong>先点击按钮或喊唤醒词“小守护”，再下达语音指令。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- B端后台能力 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">B端后台能力</div>
+      <span class="card-action">机构工作台</span>
+    </div>
+    <table class="ability-table">
+      <thead>
+        <tr>
+          <th>能力模块</th>
+          <th>说明</th>
+          <th>MVP状态</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>老人在线统计</td>
+          <td>查看当前在线老人数量，辅助护工掌握看护范围</td>
+          <td><span class="status-pill">已可视化</span></td>
+        </tr>
+        <tr>
+          <td>告警处理</td>
+          <td>未处理告警置顶，区分紧急告警与普通提醒</td>
+          <td><span class="status-pill">已可视化</span></td>
+        </tr>
+        <tr>
+          <td>语音唤醒权限管理</td>
+          <td>为认知障碍老人单独关闭语音唤醒，保留手动模式</td>
+          <td><span class="status-pill">已可视化</span></td>
+        </tr>
+        <tr>
+          <td>位置监控与电子围栏</td>
+          <td>实时位置查看、越界告警，辅助机构安全管理</td>
+          <td><span class="status-pill plan">二期规划</span></td>
+        </tr>
+        <tr>
+          <td>健康记录与历史查询</td>
+          <td>记录老人健康问询结果，支持后续回溯与管理</td>
+          <td><span class="status-pill plan">二期规划</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 项目亮点 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">项目亮点</div>
+    </div>
+    <div class="highlight-list">
+      <div class="highlight-item">
+        <h4>🎯 适老化无障碍设计</h4>
+        <p>超大字体、高对比度配色、大圆角按钮，降低老人视觉识别和操作负担。</p>
+      </div>
+      <div class="highlight-item">
+        <h4>🔁 双触发交互设计</h4>
+        <p>兼顾语音唤醒老人与手动点击老人，减少口齿不清、环境嘈杂带来的使用障碍。</p>
+      </div>
+      <div class="highlight-item">
+        <h4>🔗 B+C联动设计</h4>
+        <p>C端采集老人告警与位置数据，B端统一管理，满足养老院真实业务闭环。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 项目文档 -->
+  <div class="card" id="documents">
+    <div class="card-header">
+      <div class="card-title">项目文档</div>
+      <span class="card-action">作品集附件</span>
+    </div>
+    <div class="doc-grid">
+      <a class="doc-card" href="./prototype.md">
+        <h4>📘 产品原型说明</h4>
+        <p>C端页面逻辑、B端模块说明与MVP迭代思路。</p>
+      </a>
+      <a class="doc-card" href="./prd.md">
+        <h4>📗 产品需求文档 PRD</h4>
+        <p>整理项目需求、用户故事、功能逻辑与优先级。</p>
+      </a>
+      <a class="doc-card" href="./research.md">
+        <h4>📙 用户调研与可行性分析</h4>
+        <p>说明目标用户、场景痛点与方案可行性依据。</p>
+      </a>
+      <a class="doc-card" href="./competitor.md">
+        <h4>📕 竞品分析</h4>
+        <p>对比同类养老产品，明确本项目差异化切入点。</p>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  产品作品集｜AI长辈守护项目
+</footer>
+
+</body>
+</html>
