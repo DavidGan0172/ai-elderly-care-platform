@@ -63,7 +63,9 @@ ai-elderly-care-platform/
 ├─ index.html                # 项目作品集网页（在线预览入口）
 ├─ README.md                 # 仓库说明（当前文档）
 ├─ prd.md                    # 产品需求文档
-├─ competitor.md             # 竞品分析文档
+├─ research.md               # 用户调研与可行性分析
+├─ competitor.md             # 竞品原始素材/调研笔记
+├─ competitor_analysis_final.md  # 竞品分析报告（正式版）
 ├─ prototype.md              # Figma 原型说明文档
 ├─ flow.md                   # 业务流程图说明
 ├─ interaction.md            # 交互逻辑说明
